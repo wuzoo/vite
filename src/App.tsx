@@ -20,24 +20,14 @@ const Wrapper = styled.div`
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        path: "",
-        element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "profile",
-        element: (
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        ),
-      },
+      { path: "", element: <Home /> },
+      { path: "profile", element: <Profile /> },
     ],
   },
   { path: "/login", element: <Login /> },
