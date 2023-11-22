@@ -61,6 +61,33 @@ export default function CreateAccount() {
       setPassword(value);
     }
   };
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLoading || name === "" || email === "" || password === "") return;
+    try {
+      setIsLoading(true);
+      const credentials = await createUserWithEmailAndPassword(
+        // 계정 생성
+        auth,
+        email,
+        password
+      );
+      console.log(credentials.user);
+      await updateProfile(credentials.user, {
+        // 사용자 프로파일 업데이트
+        displayName: name,
+      });
+      navigate("/");
+      // create an account
+      // set the name of the user
+      // redirect to the home page
+    } catch (e) {
+      // catch error
+    } finally {
+      setIsLoading(false);
+    }
+    console.log(name, email, password);
+  };
 
   return (
     <Wrapper>
