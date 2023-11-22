@@ -7,8 +7,9 @@ import Login from "./routes/Login";
 import CreateAccount from "./routes/Create-account";
 import Globalstyle from "./GlobalStyle";
 import LoadingScreen from "./components/Loading-screen";
-import auth from "./components/firebase";
+import auth from "./firebase";
 import { styled } from "styled-components";
+import ProtectedRoute from "./components/protected-route";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -21,8 +22,22 @@ const router = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-      { path: "", element: <Home /> },
-      { path: "profile", element: <Profile /> },
+      {
+        path: "",
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   { path: "/login", element: <Login /> },
