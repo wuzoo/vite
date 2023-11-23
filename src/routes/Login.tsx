@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import auth from "../firebase";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -48,6 +50,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { name, value },
@@ -57,6 +61,29 @@ export default function Login() {
     } else if (name === "password") {
       setPassword(value);
     }
+  };
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setError("");
+    if (isLoading || email === "" || password === "") return;
+    try {
+      setIsLoading(true);
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log(credential);
+      navigate("/");
+    } catch (e) {
+      if (e instanceof FirebaseError) {
+        setError(e.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+    console.log(name, email, password);
   };
 
   return (
@@ -79,10 +106,7 @@ export default function Login() {
           required
           onChange={onChange}
         />
-        <Input
-          type="submit"
-          value={isLoading ? "Loading..." : "Create Account"}
-        />
+        <Input type="submit" value={isLoading ? "Loading..." : "Log in"} />
       </Form>
       {error !== "" ? <Error>{error.split("Firebase:")}</Error> : ""}
     </Wrapper>
