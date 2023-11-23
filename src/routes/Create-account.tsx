@@ -1,8 +1,9 @@
 import { styled } from "styled-components";
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import auth from "../components/firebase";
+import auth from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -82,7 +83,9 @@ export default function CreateAccount() {
       // set the name of the user
       // redirect to the home page
     } catch (e) {
-      // catch error
+      if (e instanceof FirebaseError) {
+        setError(e.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +125,8 @@ export default function CreateAccount() {
           value={isLoading ? "Loading..." : "Create Account"}
         />
       </Form>
-      {error !== "" ? <Error>{error}</Error> : ""}
+      <div style={{ marginTop: "20px" }}></div>
+      {error !== "" ? <Error>{error.split("Firebase:")}</Error> : ""}
     </Wrapper>
   );
 }
