@@ -10,8 +10,7 @@ export const Wrapper = styled.div`
 `;
 export const Form = styled.form`
   margin-top: 50px;
-  margin-bottom: 10px;
-  margin-top: 50px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;
