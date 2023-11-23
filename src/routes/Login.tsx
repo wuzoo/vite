@@ -11,6 +11,7 @@ import {
   Title,
   Wrapper,
 } from "../components/auth-component";
+import GithubButton from "../components/github-btn";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +83,7 @@ export default function Login() {
         Don't you have a account ?{" "}
         <Link to="/create-account">Create one &rarr;</Link>
       </Switcher>
+      <GithubButton />
     </Wrapper>
   );
 }
