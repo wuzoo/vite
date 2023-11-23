@@ -4,5 +4,5 @@ Firebase를 경험해보는 동시에, TypeScript 과 Vite를 사용 및 연습�
 
 - React / React-Router
 - TypeScript
-- Vite<a href="https://ko.vitejs.dev/">https://ko.vitejs.dev/</a>
-- Firebase<a href="https://firebase.google.com/?hl=ko">https://firebase.google.com/?hl=ko</a>
+- Vite ( <a href="https://ko.vitejs.dev/">https://ko.vitejs.dev/</a> )
+- Firebase ( <a href="https://firebase.google.com/?hl=ko">https://firebase.google.com/?hl=ko</a> )
