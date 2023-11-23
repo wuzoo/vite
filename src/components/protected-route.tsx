@@ -8,7 +8,7 @@ export default function ProtectedRoute({
 }) {
   const user = auth.currentUser; // return User | null
   if (user === null) {
-    return <Navigate to="/create-account" />;
+    return <Navigate to="/login" />;
   }
   return children;
 }
