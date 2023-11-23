@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import auth from "../firebase";
@@ -41,6 +41,12 @@ const Title = styled.h1`
 const Error = styled.span`
   font-weight: 600;
   color: tomato;
+`;
+const Switcher = styled.div`
+  margin-top: 20px;
+  a {
+    color: #1d9bf0;
+  }
 `;
 
 export default function Login() {
@@ -109,6 +115,10 @@ export default function Login() {
         <Input type="submit" value={isLoading ? "Loading..." : "Log in"} />
       </Form>
       {error !== "" ? <Error>{error.split("Firebase:")}</Error> : ""}
+      <Switcher>
+        Don't you have a account ?{" "}
+        <Link to="/create-account">Create one &rarr;</Link>
+      </Switcher>
     </Wrapper>
   );
 }
