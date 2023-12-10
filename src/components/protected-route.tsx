@@ -1,12 +1,14 @@
-import { redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import auth from "../firebase";
 
-export function loader() {
-  const user = auth.currentUser; // return User | null
-  console.log(user);
-
+export default function ProtectedRoute({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = auth.currentUser;
   if (user === null) {
-    return redirect("/login");
+    return <Navigate to="/login" />;
   }
-  return null;
+  return children;
 }

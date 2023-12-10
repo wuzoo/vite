@@ -9,7 +9,7 @@ import Globalstyle from "./GlobalStyle";
 import LoadingScreen from "./components/Loading-screen";
 import auth from "./firebase";
 import { styled } from "styled-components";
-import { loader as protectedloader } from "./components/protected-route";
+import ProtectedRoute from "./components/protected-route";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -20,10 +20,14 @@ const Wrapper = styled.div`
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
-      { path: "", element: <Home />, loader: protectedloader },
-      { path: "profile", element: <Profile />, loader: protectedloader },
+      { path: "", element: <Home /> },
+      { path: "profile", element: <Profile /> },
     ],
   },
   { path: "/login", element: <Login /> },
