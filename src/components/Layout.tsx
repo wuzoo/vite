@@ -9,7 +9,8 @@ const Wrapper = styled.div`
   height: 100%;
   padding: 50px 0px;
   width: 100%;
-  max-width: 860px;
+  margin-top: 100px;
+  max-width: 900px;
   svg {
     fill: white;
   }
