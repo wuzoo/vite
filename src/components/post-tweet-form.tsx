@@ -8,7 +8,6 @@ const Form = styled.form`
   flex-direction: column;
   gap: 10px;
 `;
-
 const TextArea = styled.textarea`
   border: 2px solid white;
   padding: 20px;
@@ -30,7 +29,6 @@ const TextArea = styled.textarea`
     border-color: #1d9bf0;
   }
 `;
-
 const AttachFileButton = styled.label`
   padding: 10px 0px;
   color: #1d9bf0;
@@ -41,11 +39,9 @@ const AttachFileButton = styled.label`
   font-weight: 600;
   cursor: pointer;
 `;
-
 const AttachFileInput = styled.input`
   display: none;
 `;
-
 const SubmitBtn = styled.button`
   background-color: #1d9bf0;
   color: white;
@@ -86,10 +82,11 @@ export default function PostTweetForm() {
     try {
       setIsLoading(true);
       await addDoc(collection(db, "tweets"), {
+        // firestore, 데이터베이스에 아래 객체로 이루어진 컬렉션의 문서 추가
         tweet,
         createAt: Date.now(),
         username: user.displayName || "Anonymous",
-        userId: user.uid,
+        userId: user.uid, // uid : user Id
       });
     } catch (e) {
       console.log(e);
