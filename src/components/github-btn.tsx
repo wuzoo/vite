@@ -26,8 +26,8 @@ export default function GithubButton() {
 
   const onClick = async () => {
     try {
-      const provider = new GithubAuthProvider();
-      await signInWithPopup(auth, provider);
+      const provider = new GithubAuthProvider(); // Github 소셜로그인 provider 생성
+      await signInWithPopup(auth, provider); // Popup으로 로그인, Redirect는 추가 URL 작업 필요
       navigate("/");
     } catch (e) {
       console.log(e);
