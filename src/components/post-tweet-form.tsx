@@ -1,7 +1,8 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import styled from "styled-components";
-import auth, { db } from "../firebase";
+import auth, { db, storage } from "../firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Form = styled.form`
   display: flex;
@@ -79,15 +80,34 @@ export default function PostTweetForm() {
     console.log(user);
     if (!user || isLoading || tweet === "" || tweet.length > 180) return;
 
+    // 데이터를 클라우드 데이터베이스와 스토리지에 업로드하고 다운로드 URL을 통해 둘을 연결
     try {
       setIsLoading(true);
-      await addDoc(collection(db, "tweets"), {
+      const doc = await addDoc(collection(db, "tweets"), {
         // firestore, 데이터베이스에 아래 객체로 이루어진 컬렉션의 문서 추가
+        // addDoc은 문서에 대한 참조 promise를 반환하며, 각 document에게 자동으로 id 부여.
         tweet,
         createAt: Date.now(),
         username: user.displayName || "Anonymous",
         userId: user.uid, // uid : user Id
       });
+      if (file) {
+        // 지정한 URL로의 storage 레퍼런스 생성
+        const locationRef = ref(
+          storage,
+          `tweets/${user.uid}-${user.displayName}/${doc.id}`
+        );
+        const result = await uploadBytes(locationRef, file); // document 생성 후 이미지를 첨부한다면 이 경로에 저장됨
+        const url = await getDownloadURL(result.ref); // 업로드한 파일의 URL get
+
+        await updateDoc(doc, {
+          // Doc 업데이트
+          photo: url,
+        });
+
+        setTweet("");
+        setFile(null);
+      }
     } catch (e) {
       console.log(e);
     } finally {
