@@ -4,12 +4,12 @@ import styled from "styled-components";
 import auth, { db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-const Form = styled.form`
+export const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
-const TextArea = styled.textarea`
+export const TextArea = styled.textarea`
   border: 2px solid white;
   padding: 20px;
   border-radius: 20px;
@@ -30,7 +30,7 @@ const TextArea = styled.textarea`
     border-color: #1d9bf0;
   }
 `;
-const AttachFileButton = styled.label`
+export const AttachFileButton = styled.label`
   padding: 10px 0px;
   color: #1d9bf0;
   text-align: center;
@@ -40,10 +40,10 @@ const AttachFileButton = styled.label`
   font-weight: 600;
   cursor: pointer;
 `;
-const AttachFileInput = styled.input`
+export const AttachFileInput = styled.input`
   display: none;
 `;
-const SubmitBtn = styled.button`
+export const SubmitBtn = styled.button`
   background-color: #1d9bf0;
   color: white;
   border: none;
@@ -86,9 +86,9 @@ export default function PostTweetForm() {
         `Your File size is ${uploadsize.toFixed(2) + bytesUnit[digit]}.`
       );
 
-      const limit = 1024 ** 2; // 1MB
+      const limit = 1024 ** 2 * 3; // 3MB
       if (files[0].size >= limit) {
-        alert("Please add file that is 1MB or less");
+        alert("Please add file that is 3MB or less");
         setFile(null);
       }
     }
