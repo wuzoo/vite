@@ -3,6 +3,8 @@ import { ITweet } from "./timeline";
 import auth, { db, storage } from "../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
+import { useSetRecoilState } from "recoil";
+import { EditClicked, EditTweet } from "../atoms/atom";
 
 const Wrapper = styled.div`
   display: grid;
@@ -39,8 +41,18 @@ const DeleteButton = styled.button`
   border-radius: 5px;
 `;
 
+const EditButton = styled(DeleteButton)`
+  background-color: white;
+  color: black;
+  margin-left: 8px;
+`;
+
 export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
+  const setEditStatus = useSetRecoilState(EditClicked);
+  const setEditTweet = useSetRecoilState(EditTweet);
+
   const user = auth.currentUser;
+
   const onDelete = async () => {
     const ok = confirm("Are you sure you want to delete this tweet?");
     if (!ok || user?.uid !== userId) return;
@@ -55,13 +67,27 @@ export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
     } finally {
     }
   };
+
+  const onEdit = () => {
+    setEditTweet({
+      userId,
+      photo,
+      id,
+      tweet,
+    });
+    setEditStatus(true);
+  };
+
   return (
     <Wrapper>
       <Column>
         <Username>{username}</Username>
         <Payload>{tweet}</Payload>
         {user?.uid === userId ? (
-          <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+          <>
+            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+            <EditButton onClick={() => onEdit()}>Edit</EditButton>
+          </>
         ) : null}
       </Column>
       <Column>{photo && <Photo src={photo} />}</Column>
