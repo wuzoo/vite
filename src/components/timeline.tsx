@@ -18,6 +18,7 @@ export interface ITweet {
   userId: string;
   username: string;
   createAt: number;
+  children?: React.ReactNode;
 }
 
 const Wrapper = styled.div`
