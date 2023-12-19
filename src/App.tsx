@@ -11,8 +11,7 @@ import auth from "./firebase";
 import { styled } from "styled-components";
 import ProtectedRoute from "./components/protected-route";
 import EditModal from "./components/edit-modal";
-import { RecoilRoot, useRecoilValue } from "recoil";
-import { EditClicked } from "./atoms/atom";
+import { RecoilRoot } from "recoil";
 
 const Wrapper = styled.div`
   height: 100vh;
