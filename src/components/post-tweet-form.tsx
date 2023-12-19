@@ -71,7 +71,28 @@ export default function PostTweetForm() {
     if (files && files.length === 1) {
       // 복수 파일 업로드 가능
       setFile(files[0]);
+      const bytesUnit = ["KB", "MB", "GB", "TB"];
+
+      let uploadsize = files[0].size;
+      let digit = -1;
+
+      while (uploadsize > 1024) {
+        uploadsize /= 1024;
+        digit++;
+      }
+
+      console.log(files[0].size);
+      console.log(
+        `Your File size is ${uploadsize.toFixed(2) + bytesUnit[digit]}.`
+      );
+
+      const limit = 1024 ** 2; // 1MB
+      if (files[0].size >= limit) {
+        alert("Please add file that is 1MB or less");
+        setFile(null);
+      }
     }
+    // byte -> MB -> 1000,000
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
