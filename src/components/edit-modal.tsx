@@ -10,9 +10,10 @@ import {
 } from "./post-tweet-form";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { EditClicked, EditTweet } from "../atoms/atom";
-import auth, { db } from "../firebase";
+import { db, storage } from "../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const Overlay = styled.div`
   width: 100%;
@@ -29,11 +30,19 @@ const EditForm = styled(Form)`
   width: 40%;
   max-width: 500px;
 `;
+const Photo = styled.img`
+  width: 150px;
+  height: 200px;
+  border-radius: 10px;
+  margin-left: 20px;
+`;
 
 export default function EditModal() {
-  const [tw, setTw] = useState("");
-
   const parentElement = usePortal("edit-modal");
+
+  const [tw, setTw] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [url, setURL] = useState("");
 
   const [EditisClicked, setEditisClicked] = useRecoilState(EditClicked);
   const tweet = useRecoilValue(EditTweet);
@@ -53,6 +62,19 @@ export default function EditModal() {
     }
   };
 
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+
+    if (files && files.length === 1) {
+      setFile(files[0]);
+
+      console.log(e.target.files);
+      console.log(URL.createObjectURL(files[0]));
+
+      setURL(URL.createObjectURL(files[0]));
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // const user = auth.currentUser;
@@ -62,7 +84,15 @@ export default function EditModal() {
       const docSnap = await getDoc(docRef);
       console.log(docSnap.data());
 
+      let url = "";
+
+      if (file) {
+        const locationRef = ref(storage, `tweets/${tweet.userId}/${tweet.id}`);
+        const result = await uploadBytes(locationRef, file);
+        url = await getDownloadURL(result.ref);
+      }
       await updateDoc(docRef, {
+        photo: url,
         tweet: tw,
       });
     } catch (e) {
@@ -81,10 +111,16 @@ export default function EditModal() {
               onChange={onChange}
               value={tw}
             ></TextArea>
-            <AttachFileButton htmlFor="file">Edit Photo</AttachFileButton>
-            <AttachFileInput type="file" id="file" accept="image/*" />
+            <AttachFileButton htmlFor="edit-file">Edit Photo</AttachFileButton>
+            <AttachFileInput
+              onChange={onFileChange}
+              type="file"
+              id="edit-file"
+              accept="image/*"
+            />
             <SubmitBtn type="submit">Edit Tweet</SubmitBtn>
           </EditForm>
+          <Photo src={file ? url : tweet?.photo} />
         </Overlay>,
         parentElement
       )
