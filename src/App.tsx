@@ -10,6 +10,9 @@ import LoadingScreen from "./components/Loading-screen";
 import auth from "./firebase";
 import { styled } from "styled-components";
 import ProtectedRoute from "./components/protected-route";
+import EditModal from "./components/edit-modal";
+import { RecoilRoot, useRecoilValue } from "recoil";
+import { EditClicked } from "./atoms/atom";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -48,10 +51,13 @@ function App() {
   }, []);
 
   return (
-    <Wrapper>
-      <Globalstyle />
-      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
-    </Wrapper>
+    <RecoilRoot>
+      <EditModal />
+      <Wrapper>
+        <Globalstyle />
+        {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+      </Wrapper>
+    </RecoilRoot>
   );
 }
 
