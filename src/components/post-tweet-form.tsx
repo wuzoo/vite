@@ -114,10 +114,7 @@ export default function PostTweetForm() {
       });
       if (file) {
         // 지정한 URL로의 storage 레퍼런스 생성
-        const locationRef = ref(
-          storage,
-          `tweets/${user.uid}-${user.displayName}/${doc.id}`
-        );
+        const locationRef = ref(storage, `tweets/${user.uid}/${doc.id}`);
         const result = await uploadBytes(locationRef, file); // document 생성 후 이미지를 첨부한다면 이 경로에 저장됨
         const url = await getDownloadURL(result.ref); // 업로드한 파일의 URL get
 
