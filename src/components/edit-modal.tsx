@@ -42,6 +42,17 @@ export default function EditModal() {
     setTw(e.target.value);
   };
 
+  const onOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    console.log(e.target);
+    console.log(e.currentTarget);
+
+    console.log(e.bubbles);
+
+    if (e.target === e.currentTarget) {
+      setEditisClicked(false);
+    }
+  };
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // const user = auth.currentUser;
@@ -61,7 +72,7 @@ export default function EditModal() {
 
   return parentElement && EditisClicked
     ? ReactDOM.createPortal(
-        <Overlay>
+        <Overlay onClick={(e) => onOverlayClick(e)}>
           <EditForm onSubmit={onSubmit}>
             <TextArea
               rows={5}
