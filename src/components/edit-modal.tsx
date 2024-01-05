@@ -8,9 +8,9 @@ import {
   AttachFileInput,
   SubmitBtn,
 } from "./post-tweet-form";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { EditClicked, EditTweet } from "../atoms/atom";
-import { db, storage } from "../firebase";
+// import { useRecoilState, useRecoilValue } from "recoil";
+// import { EditClicked, EditTweet } from "../atoms/atom";
+import auth, { db, storage } from "../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -37,15 +37,25 @@ const Photo = styled.img`
   margin-left: 20px;
 `;
 
-export default function EditModal() {
+export default function EditModal({
+  open,
+  setOpen,
+  id,
+  tweet,
+  photo,
+}: {
+  open: boolean;
+  setOpen: Function;
+  id: string;
+  tweet: string;
+  photo: string;
+}) {
   const parentElement = usePortal("edit-modal");
+  //   const tweet = useRecoilValue(EditTweet);
 
-  const [tw, setTw] = useState("");
+  const [tw, setTw] = useState(tweet);
   const [file, setFile] = useState<File | null>(null);
   const [url, setURL] = useState("");
-
-  const [EditisClicked, setEditisClicked] = useRecoilState(EditClicked);
-  const tweet = useRecoilValue(EditTweet);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTw(e.target.value);
@@ -58,7 +68,7 @@ export default function EditModal() {
     console.log(e.bubbles);
 
     if (e.target === e.currentTarget) {
-      setEditisClicked(false);
+      setOpen(false);
     }
   };
 
@@ -68,26 +78,25 @@ export default function EditModal() {
     if (files && files.length === 1) {
       setFile(files[0]);
 
-      console.log(e.target.files);
-      console.log(URL.createObjectURL(files[0]));
-
       setURL(URL.createObjectURL(files[0]));
     }
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const user = auth.currentUser;
+    const user = auth.currentUser;
+
+    if (!user) return;
 
     try {
-      const docRef = doc(db, "tweets", tweet.id);
+      const docRef = doc(db, "tweets", id);
       const docSnap = await getDoc(docRef);
       console.log(docSnap.data());
 
-      let url = "";
+      let url = photo;
 
       if (file) {
-        const locationRef = ref(storage, `tweets/${tweet.userId}/${tweet.id}`);
+        const locationRef = ref(storage, `tweets/${user.uid}/${id}`);
         const result = await uploadBytes(locationRef, file);
         url = await getDownloadURL(result.ref);
       }
@@ -100,14 +109,13 @@ export default function EditModal() {
     }
   };
 
-  return parentElement && EditisClicked
+  return parentElement && open
     ? ReactDOM.createPortal(
         <Overlay onClick={(e) => onOverlayClick(e)}>
           <EditForm onSubmit={onSubmit}>
             <TextArea
               rows={5}
               maxLength={160}
-              placeholder={tweet.tweet}
               onChange={onChange}
               value={tw}
             ></TextArea>
@@ -120,7 +128,7 @@ export default function EditModal() {
             />
             <SubmitBtn type="submit">Edit Tweet</SubmitBtn>
           </EditForm>
-          <Photo src={file ? url : tweet?.photo} />
+          <Photo src={file ? url : photo} />
         </Overlay>,
         parentElement
       )
