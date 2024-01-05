@@ -3,8 +3,8 @@ import { ITweet } from "./timeline";
 import auth, { db, storage } from "../firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
-import { useSetRecoilState } from "recoil";
-import { EditClicked, EditTweet } from "../atoms/atom";
+import EditModal from "./edit-modal";
+import { useState } from "react";
 
 const Wrapper = styled.div`
   display: grid;
@@ -14,6 +14,7 @@ const Wrapper = styled.div`
   border-radius: 15px;
 `;
 const Column = styled.div``;
+
 const Photo = styled.img`
   width: 100px;
   height: 100px;
@@ -48,8 +49,7 @@ const EditButton = styled(DeleteButton)`
 `;
 
 export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
-  const setEditStatus = useSetRecoilState(EditClicked);
-  const setEditTweet = useSetRecoilState(EditTweet);
+  const [open, setOpen] = useState(false);
 
   const user = auth.currentUser;
 
@@ -69,28 +69,31 @@ export default function Tweet({ username, photo, tweet, userId, id }: ITweet) {
   };
 
   const onEdit = () => {
-    setEditTweet({
-      userId,
-      photo,
-      id,
-      tweet,
-    });
-    setEditStatus(true);
+    setOpen(true);
   };
 
   return (
-    <Wrapper>
-      <Column>
-        <Username>{username}</Username>
-        <Payload>{tweet}</Payload>
-        {user?.uid === userId ? (
-          <>
-            <DeleteButton onClick={onDelete}>Delete</DeleteButton>
-            <EditButton onClick={() => onEdit()}>Edit</EditButton>
-          </>
-        ) : null}
-      </Column>
-      <Column>{photo && <Photo src={photo} />}</Column>
-    </Wrapper>
+    <>
+      <Wrapper>
+        <Column>
+          <Username>{username}</Username>
+          <Payload>{tweet}</Payload>
+          {user?.uid === userId ? (
+            <>
+              <DeleteButton onClick={onDelete}>Delete</DeleteButton>
+              <EditButton onClick={() => onEdit()}>Edit</EditButton>
+            </>
+          ) : null}
+        </Column>
+        <Column>{photo && <Photo src={photo} />}</Column>
+      </Wrapper>
+      <EditModal
+        photo={photo || ""}
+        id={id}
+        tweet={tweet}
+        open={open}
+        setOpen={setOpen}
+      />
+    </>
   );
 }
